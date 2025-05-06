@@ -1,43 +1,5 @@
 #include "Module_UI_HUD.h"
-
-//------------------------------------------------------------------------------------------------------------
-FReply UModule_UI_HUD::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-    // Получаем координаты клика в локальных координатах виджета
-    const FVector2D mouse_pos = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
-
-    // Логируем координаты клика
-    UE_LOG(LogTemp, Warning, TEXT("Mouse Clicked at: X: %f, Y: %f"), mouse_pos.X, mouse_pos.Y);
-
-    return FReply::Handled(); // Сообщаем, что событие обработано
-}
-//------------------------------------------------------------------------------------------------------------
-FReply UModule_UI_HUD::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-    // Получаем координаты мыши в глобальных координатах экрана
-    const FVector2D mouse_pos = InMouseEvent.GetScreenSpacePosition();
-
-    // Логируем координаты мыши
-    UE_LOG(LogTemp, Warning, TEXT("Mouse Moved at: X: %f, Y: %f"), mouse_pos.X, mouse_pos.Y);
-
-    return FReply::Unhandled(); // Возвращаем Unhandled, чтобы событие передавалось дальше
-}
-//------------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------------
-
-
-/*
-
-#include "Personal_Hub_Game_Mode.h"
-#include "Personal_Hub_Character.h"
-
-#include "Components/SizeBox.h"
-#include "Components/Image.h"
-#include "Components/ProgressBar.h"
-#include "Components/Border.h"
-
-#include "GameFramework/GameUserSettings.h"
+#include "Module_UI.h"
 
 // UADrag_Widget
 void UADrag_Widget::NativeConstruct()
@@ -45,47 +7,40 @@ void UADrag_Widget::NativeConstruct()
 	Super::NativeConstruct();
 }
 //-------------------------------------------------------------------------------------------------------------
-void UADrag_Widget::Update_State(const UImage* image, const FVector2D& desired_size) const
+void UADrag_Widget::Update_State(const UImage *image, const FVector2D desired_size) const
 {
 	SizeBox_Root->SetWidthOverride(desired_size.X);
 	SizeBox_Root->SetHeightOverride(desired_size.Y);  // Set Widget Box Size
-	Border_Root->SetBrush(image->GetBrush());
+	Border_Root->SetBrush(image->GetBrush() );
 }
 //-------------------------------------------------------------------------------------------------------------
 
 
 
 
-
-// UAPersonal_Main_Button
-void UAPersonal_Main_Button::NativeConstruct()
-{
-	Init();
-
-	Super::NativeConstruct();
-}
-//-------------------------------------------------------------------------------------------------------------
-FReply UAPersonal_Main_Button::NativeOnMouseButtonDown(const FGeometry& in_geometry, const FPointerEvent& in_mouse_event)
+// UAModule_UI_Inventory_Slot
+FReply UAModule_UI_Inventory_Slot::NativeOnMouseButtonDown(const FGeometry &in_geometry, const FPointerEvent &in_mouse_event)
 {
 	Super::NativeOnMouseButtonDown(in_geometry, in_mouse_event);
 
-	Drag_Offset = in_geometry.AbsoluteToLocal(in_mouse_event.GetScreenSpacePosition());  // Save Drag offset
+    const FVector2D mouse_pos = in_geometry.AbsoluteToLocal(in_mouse_event.GetScreenSpacePosition() );
+
+	Drag_Offset = in_geometry.AbsoluteToLocal(in_mouse_event.GetScreenSpacePosition() );  // Save Drag offset
+
+    UE_LOG(LogTemp, Warning, TEXT("Mouse Clicked at: X: %f, Y: %f"), mouse_pos.X, mouse_pos.Y);
 
 	return UWidgetBlueprintLibrary::DetectDragIfPressed(in_mouse_event, this, EKeys::LeftMouseButton).NativeReply;  // if start drag
 }
-//-------------------------------------------------------------------------------------------------------------
-void UAPersonal_Main_Button::NativeOnDragDetected(const FGeometry& in_geometry, const FPointerEvent& in_mouse_event, UDragDropOperation*& out_operation)
-{// what happens when the player is, in fact, dragging the Image_Root around on the screen.
-
+//------------------------------------------------------------------------------------------------------------
+void UAModule_UI_Inventory_Slot::NativeOnDragDetected(const FGeometry &in_geometry, const FPointerEvent &in_mouse_event, UDragDropOperation *&out_operation)
+{
 	UADrag_Widget* drag_visual = 0;
-
-	Super::NativeOnDragDetected(in_geometry, in_mouse_event, out_operation);
 
 	// 1.0. Display Widget
 	drag_visual = CreateWidget<UADrag_Widget>(GetWorld(), Drag_Widget_Class);  // Widget to show where we drag this widget
-	drag_visual->Update_State(Image_Root, GetDesiredSize());
+	drag_visual->Update_State(Image_Root, GetDesiredSize() );
 
-	// 1.1. Operation Drag n Drop Init  NewDragDrop->Offset = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
+	// 1.1. Operation Drag n Drop Init  NewDragDrop->Offset = in_geometry.AbsoluteToLocal(in_mouse_event.GetScreenSpacePosition());
 	Drag_Drop_Operation = NewObject<UADrag_Drop_Operation>(this, Drag_Drop_O_Class);
 	Drag_Drop_Operation->DefaultDragVisual = drag_visual;
 	Drag_Drop_Operation->Payload = this;  // Is it correct?
@@ -94,34 +49,67 @@ void UAPersonal_Main_Button::NativeOnDragDetected(const FGeometry& in_geometry, 
 	Drag_Drop_Operation->Drag_Offset = Drag_Offset;  // Off set from mouse to correct add to viewport
 
 	out_operation = Drag_Drop_Operation;  // send operation to drop
+
+	Super::NativeOnDragDetected(in_geometry, in_mouse_event, out_operation);
 }
-//-----------------------------------------------------------------------------------------------------------
-bool UAPersonal_Main_Button::NativeOnDrop(const FGeometry& in_geometry, const FDragDropEvent& in_drag_drop_event, UDragDropOperation* in_operation)
+//------------------------------------------------------------------------------------------------------------
+bool UAModule_UI_Inventory_Slot::NativeOnDrop(const FGeometry &in_geometry, const FDragDropEvent &in_drag_drop_event, UDragDropOperation *in_operation)
 {
-	UADrag_Drop_Operation* drop_operations;
-	UAPersonal_Main_Button* drop_widget_ref;
+	UADrag_Drop_Operation *drop_operations;
+	UAModule_UI_Inventory_Slot *drop_widget_ref;
+
+	drop_operations = Cast<UADrag_Drop_Operation>(in_operation);
+	drop_widget_ref = Cast<UAModule_UI_Inventory_Slot>(drop_operations->Widget_Reference);
+
+	FSlateBrush brush = Image_Root->GetBrush();
+
+	Image_Root->SetBrush(drop_widget_ref->Image_Root->GetBrush() );
+	drop_widget_ref->Image_Root->SetBrush(brush);
 
 	Super::NativeOnDrop(in_geometry, in_drag_drop_event, in_operation);
-	drop_operations = Cast<UADrag_Drop_Operation>(in_operation);
-	drop_widget_ref = Cast<UAPersonal_Main_Button>(drop_operations->Widget_Reference);
-
-	// 1.0. Update On Droped Button State
-	Is_Empty = false;
-	Update_State();  // Update button state
-
-	// 1.1. Update Draged Button State
-	drop_widget_ref->Is_Empty = true;
-	drop_widget_ref->Update_State();  // Update button state
 
 	return true;
 }
 //-----------------------------------------------------------------------------------------------------------
-void UAPersonal_Main_Button::Init() const
+
+
+
+
+// UModule_UI_HUD
+void UModule_UI_HUD::NativeOnDragDetected(const FGeometry &in_geometry, const FPointerEvent &in_mouse_event, UDragDropOperation *&out_operation)
 {
-	check(Drag_Drop_O_Class);
-	check(Drag_Widget_Class);
+	Super::NativeOnDragDetected(in_geometry, in_mouse_event, out_operation);
 }
-//-----------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
+FReply UModule_UI_HUD::NativeOnMouseButtonDown(const FGeometry &in_geometry, const FPointerEvent &in_mouse_event)
+{
+	Super::NativeOnMouseButtonDown(in_geometry, in_mouse_event);
+
+    const FVector2D mouse_pos = in_geometry.AbsoluteToLocal(in_mouse_event.GetScreenSpacePosition() );
+
+    UE_LOG(LogTemp, Warning, TEXT("Mouse Clicked at: X: %f, Y: %f"), mouse_pos.X, mouse_pos.Y);
+
+	return UWidgetBlueprintLibrary::DetectDragIfPressed(in_mouse_event, this, EKeys::LeftMouseButton).NativeReply;  // if start drag
+}
+//------------------------------------------------------------------------------------------------------------
+FReply UModule_UI_HUD::NativeOnMouseMove(const FGeometry &in_geometry, const FPointerEvent &in_mouse_event)
+{
+    const FVector2D mouse_pos = in_mouse_event.GetScreenSpacePosition();
+
+    UE_LOG(LogTemp, Warning, TEXT("Mouse Moved at: X: %f, Y: %f"), mouse_pos.X, mouse_pos.Y);
+
+    return FReply::Unhandled();
+}
+//------------------------------------------------------------------------------------------------------------
+
+
+/*
+
+#include "Personal_Hub_Game_Mode.h"
+#include "Personal_Hub_Character.h"
+
+#include "Components/ProgressBar.h"
+#include "GameFramework/GameUserSettings.h"
 
 
 

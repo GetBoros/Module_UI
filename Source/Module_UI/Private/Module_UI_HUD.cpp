@@ -78,45 +78,41 @@ bool UAModule_UI_Inventory_Slot::NativeOnDrop(const FGeometry &in_geometry, cons
 // AAModule_UI_HUD 
 #include "Engine/AssetManager.h"
 //-----------------------------------------------------------------------------------------------------------
+AAModule_UI_HUD::AAModule_UI_HUD()
+ : Menu_Main(0), Inventory(0), Menu_Main_Widget(0), Inventory_Widget(0)
+{
+
+}
+//-----------------------------------------------------------------------------------------------------------
 void AAModule_UI_HUD::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (MainMenuClass)
-    {
-        MainMenuWidget = CreateWidget<UUserWidget>(GetWorld(), MainMenuClass);
-        if (MainMenuWidget)
-            MainMenuWidget->AddToViewport(0);
-    }
+    if (Menu_Main != 0)  // Create Menu Main, maybe set to manual func
+		(Menu_Main_Widget = CreateWidget<UUserWidget>(GetWorld(), Menu_Main) )->AddToViewport(0);
 
-    if (InventoryWidgetAsset.IsValid() == false)
-        StreamableManager.RequestAsyncLoad(InventoryWidgetAsset.ToSoftObjectPath(), FStreamableDelegate::CreateUObject(this, &AAModule_UI_HUD::OnInventoryLoaded) );
-    else
-        OnInventoryLoaded();
-
-    if (StatsWidgetAsset.IsValid() == false)
-        StreamableManager.RequestAsyncLoad(StatsWidgetAsset.ToSoftObjectPath(), FStreamableDelegate::CreateUObject(this, &AAModule_UI_HUD::OnStatsLoaded) );
-    else
-        OnStatsLoaded();
+	if (Inventory.IsValid() == true)  // Try to async load widget and create widget, but don`t add to viewport
+		Inventory_Load_Stream();
+	else
+		UAssetManager::GetStreamableManager().RequestAsyncLoad(Inventory.ToSoftObjectPath(), FStreamableDelegate::CreateUObject(this, &AAModule_UI_HUD::Inventory_Load_Stream) );
 }
 //-----------------------------------------------------------------------------------------------------------
-void AAModule_UI_HUD::OnInventoryLoaded()
+void AAModule_UI_HUD::Inventory_Load_Stream()
 {
-    UClass* LoadedClass = InventoryWidgetAsset.Get();
-    if (LoadedClass && InventoryWidget == nullptr)
-    {
-        InventoryWidget = CreateWidget<UUserWidget>(GetWorld(), LoadedClass);
-        InventoryWidget->AddToViewport(1);
-    }
+    UClass *loaded_class = Inventory.Get();
+
+    if (loaded_class != 0)
+		Inventory_Widget = CreateWidget<UUserWidget>(GetWorld(), loaded_class);
 }
 //-----------------------------------------------------------------------------------------------------------
-void AAModule_UI_HUD::OnStatsLoaded()
+void AAModule_UI_HUD::Inventory_Toggle()
 {
-    UClass* LoadedClass = StatsWidgetAsset.Get();
-    if (LoadedClass && StatsWidget == nullptr)
-    {
-        StatsWidget = CreateWidget<UUserWidget>(GetWorld(), LoadedClass);
-        StatsWidget->AddToViewport(2);
-    }
+	if (Inventory_Widget->IsVisible() )  // Toggle Inventory visibility
+		Inventory_Widget->SetVisibility(ESlateVisibility::Hidden);
+	else
+		Inventory_Widget->SetVisibility(ESlateVisibility::Visible);
+
+	if (Inventory_Widget->IsInViewport() != true)
+		Inventory_Widget->AddToViewport();
 }
 //-----------------------------------------------------------------------------------------------------------

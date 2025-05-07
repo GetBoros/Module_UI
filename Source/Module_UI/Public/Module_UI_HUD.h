@@ -3,7 +3,6 @@
 #include "Blueprint/DragDropOperation.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/HUD.h"
-#include "Engine/StreamableManager.h"
 
 #include "Module_UI_HUD.generated.h"
 
@@ -12,7 +11,7 @@ class USizeBox;
 class UImage;
 class UProgressBar;
 class UBorder;
-//-----------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------  // Module_UI_Inventory_START
 UCLASS(meta = (DisableNativeTick) ) class UADrag_Drop_Operation : public UDragDropOperation
 {// This specialized Class enables us to pass through information as part of our drag and drop action.
 
@@ -58,25 +57,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Class", meta = (ExposeOnSpawn = true) ) TSubclassOf<UADrag_Widget> Drag_Widget_Class;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Class", meta = (ExposeOnSpawn = true) ) TSubclassOf<UADrag_Drop_Operation> Drag_Drop_O_Class;
 };
-//-----------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------  // Module_UI_Inventory_END
 UCLASS(meta = (DisableNativeTick) ) class MODULE_UI_API AAModule_UI_HUD : public AHUD
 {
 	GENERATED_BODY()
 
 public:
+	AAModule_UI_HUD();
+
 	virtual void BeginPlay();
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI") TSubclassOf<UUserWidget> MainMenuClass;
-	UPROPERTY(EditDefaultsOnly, Category = "UI") TSoftClassPtr<UUserWidget> InventoryWidgetAsset;
-	UPROPERTY(EditDefaultsOnly, Category = "UI") TSoftClassPtr<UUserWidget> StatsWidgetAsset;
+	void Inventory_Load_Stream();
 
-	UPROPERTY() UUserWidget* MainMenuWidget;
-	UPROPERTY() UUserWidget* InventoryWidget;
-	UPROPERTY() UUserWidget* StatsWidget;
+	UFUNCTION(BlueprintCallable) void Inventory_Toggle();  // If inventory will be large better destroy?
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI") TSubclassOf<UUserWidget> Menu_Main;
+	UPROPERTY(EditDefaultsOnly, Category = "UI") TSoftClassPtr<UUserWidget> Inventory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI") UUserWidget *Menu_Main_Widget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI") UUserWidget *Inventory_Widget;  // Change to TObjPtr
 	
-	FStreamableManager StreamableManager;
-
-	void OnInventoryLoaded();
-	void OnStatsLoaded();
 };
 //------------------------------------------------------------------------------------------------------------

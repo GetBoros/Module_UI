@@ -2,6 +2,7 @@
 #pragma once
 //-------------------------------------------------------------------------------------------------------------
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Engine/AssetManager.h"
 //-------------------------------------------------------------------------------------------------------------
 #include "Components/SizeBox.h"
 #include "Components/Border.h"

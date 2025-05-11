@@ -6,6 +6,7 @@
 
 //-----------------------------------------------------------------------------------------------------------
 class UImage;
+class UUniformGridPanel;
 class USizeBox;
 class UBorder;
 //-----------------------------------------------------------------------------------------------------------
@@ -56,7 +57,11 @@ UCLASS() class MODULE_UI_API UModule_UI_Inventory : public UUserWidget
 {
 	GENERATED_BODY()
 
-public:  // !!! Check if dragging work and commit push
-	
+public:
+	UFUNCTION(BlueprintCallable, Category = "Init") void Create_Slot();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Components", meta = (BindWidget) ) TObjectPtr<UUniformGridPanel> Uniform_Grid_Panel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Init", meta = (ToolTip = "TEST") ) TSubclassOf<UUserWidget> Slot_Empty;
+
 };
 //-----------------------------------------------------------------------------------------------------------

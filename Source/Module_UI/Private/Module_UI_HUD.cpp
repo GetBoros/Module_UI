@@ -29,6 +29,11 @@ void AAModule_UI_HUD::Inventory_Load_Stream()
 		Inventory_Widget = CreateWidget<UUserWidget>(GetWorld(), loaded_class);
 }
 //-----------------------------------------------------------------------------------------------------------
+void AAModule_UI_HUD::Inventory_Handle(const int equipment, const int slots)
+{
+
+}
+//-----------------------------------------------------------------------------------------------------------
 void AAModule_UI_HUD::Inventory_Toggle()
 {
 	if (Inventory_Widget->IsVisible() )  // Toggle Inventory visibility

@@ -7,4 +7,5 @@
 #include "Components/SizeBox.h"
 #include "Components/Border.h"
 #include "Components/Image.h"
+#include "Components/UniformGridPanel.h"
 //-------------------------------------------------------------------------------------------------------------

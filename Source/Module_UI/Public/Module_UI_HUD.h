@@ -16,6 +16,7 @@ public:
 	void Inventory_Load_Stream();
 
 private:
+	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true) ) void Inventory_Handle(const int equipment, const int slots);
 	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true) ) void Inventory_Toggle();  // If inventory will be large better destroy?
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI", meta = (AllowPrivateAccess = true) ) TSubclassOf<UUserWidget> Menu_Main;

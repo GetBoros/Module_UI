@@ -66,3 +66,16 @@ bool UAModule_UI_Inventory_Slot::NativeOnDrop(const FGeometry &in_geometry, cons
 	return true;
 }
 //-----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+// UModule_UI_Inventory
+void UModule_UI_Inventory::Create_Slot()
+{
+	UWidget *slot = CreateWidget(this, Slot_Empty);
+
+	Uniform_Grid_Panel->AddChildToUniformGrid(slot, 6, 7);
+}
+//-----------------------------------------------------------------------------------------------------------

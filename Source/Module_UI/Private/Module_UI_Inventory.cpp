@@ -74,8 +74,22 @@ bool UAModule_UI_Inventory_Slot::NativeOnDrop(const FGeometry &in_geometry, cons
 // UModule_UI_Inventory
 void UModule_UI_Inventory::Create_Slot()
 {
-	UWidget *slot = CreateWidget(this, Slot_Empty);
+	UWidget *slot = CreateWidget(this, Slot_Template);
 
-	Uniform_Grid_Panel->AddChildToUniformGrid(slot, 6, 7);
+	Uniform_Grid_Panel->AddChildToUniformGrid(slot, 7, 7);
+}
+//-----------------------------------------------------------------------------------------------------------
+void UModule_UI_Inventory::Create_Slots_Equipment()
+{
+	size_t i;
+	constexpr size_t count = 9;
+	UWidget *slot;
+	
+	slot = CreateWidget(this, Slot_Template);
+
+	// Set to widget enum type, texture | in slot maybe create MI 
+
+	for (i = 0; i < count; i++)
+		Uniform_Grid_Panel->AddChildToUniformGrid(CreateWidget(this, Slot_Template), i, 1);
 }
 //-----------------------------------------------------------------------------------------------------------

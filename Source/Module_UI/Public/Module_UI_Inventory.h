@@ -5,6 +5,13 @@
 #include "Module_UI_Inventory.generated.h"
 
 //-----------------------------------------------------------------------------------------------------------
+UENUM(BlueprintType) enum class ESlot_Type : uint8
+{
+	EST_None,
+	EST_Helmet
+};
+//-------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------
 class UImage;
 class UUniformGridPanel;
 class USizeBox;
@@ -48,6 +55,10 @@ public:
 
 	//UFUNCTION(BlueprintImplementableEvent, Category = "Widget | Event") void Update_State();  // Update Image
 
+	UPROPERTY(EditAnywhere, Category = "Textures") ESlot_Type Slot_Type;
+	UPROPERTY(EditAnywhere, Category = "Textures") UTexture2D *Texture_Array;
+
+	//UPROPERTY(EditAnywhere, Category = "Textures") TArray<UTexture2D *> Texture_Array;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Components", meta = (BindWidget) ) TObjectPtr<UImage> Image_Root;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Class", meta = (ExposeOnSpawn = true) ) TSubclassOf<UAModule_UI_Dragged_Widget> Drag_Widget_Class;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Class", meta = (ExposeOnSpawn = true) ) TSubclassOf<UADrag_Drop_Operation> Drag_Drop_O_Class;
@@ -59,9 +70,10 @@ UCLASS() class MODULE_UI_API UModule_UI_Inventory : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Init") void Create_Slot();
+	UFUNCTION(BlueprintCallable, Category = "Init") void Create_Slots_Equipment();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Components", meta = (BindWidget) ) TObjectPtr<UUniformGridPanel> Uniform_Grid_Panel;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Init", meta = (ToolTip = "TEST") ) TSubclassOf<UUserWidget> Slot_Empty;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Type", meta = (BindWidget) ) TObjectPtr<UUniformGridPanel> Uniform_Grid_Panel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Type", meta = (ToolTip = "A") ) TSubclassOf<UUserWidget> Slot_Template;
 
 };
 //-----------------------------------------------------------------------------------------------------------

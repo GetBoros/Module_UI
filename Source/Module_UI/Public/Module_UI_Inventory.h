@@ -8,7 +8,16 @@
 UENUM(BlueprintType) enum class ESlot_Type : uint8
 {
 	EST_None,
-	EST_Helmet
+	EST_Helmet = 0,
+	EST_Armor,
+	EST_Pants,
+	EST_Gloves,
+	EST_Boots,
+	EST_Coat,
+	EST_Talisman_L,
+	EST_Talisman_R,
+	EST_Weapon,
+	EST_Last,
 };
 //-------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------
@@ -50,15 +59,15 @@ public:
 	virtual bool NativeOnDrop(const FGeometry &in_geometry, const FDragDropEvent &in_drag_drop_event, UDragDropOperation *in_operation);  // What to do while on drop widget
 	//virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
 
+	void Init(const ESlot_Type slot_type, UTexture2D *texture2d);
+
 	FVector2D Drag_Offset;
 	TObjectPtr<UADrag_Drop_Operation> Drag_Drop_Operation;
 
 	//UFUNCTION(BlueprintImplementableEvent, Category = "Widget | Event") void Update_State();  // Update Image
 
-	UPROPERTY(EditAnywhere, Category = "Textures") ESlot_Type Slot_Type;
-	UPROPERTY(EditAnywhere, Category = "Textures") UTexture2D *Texture_Array;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Textures") ESlot_Type Slot_Type;
 
-	//UPROPERTY(EditAnywhere, Category = "Textures") TArray<UTexture2D *> Texture_Array;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Components", meta = (BindWidget) ) TObjectPtr<UImage> Image_Root;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Class", meta = (ExposeOnSpawn = true) ) TSubclassOf<UAModule_UI_Dragged_Widget> Drag_Widget_Class;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Class", meta = (ExposeOnSpawn = true) ) TSubclassOf<UADrag_Drop_Operation> Drag_Drop_O_Class;
@@ -69,9 +78,14 @@ UCLASS() class MODULE_UI_API UModule_UI_Inventory : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	void Temp();
+
 	UFUNCTION(BlueprintCallable, Category = "Init") void Create_Slot();
 	UFUNCTION(BlueprintCallable, Category = "Init") void Create_Slots_Equipment();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Textures") UTexture2D *Empty_Texture;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Textures") TArray<UTexture2D *> Equipment_Texture;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Textures") TArray<UTexture2D *> Accesorie_Texture;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Type", meta = (BindWidget) ) TObjectPtr<UUniformGridPanel> Uniform_Grid_Panel;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Type", meta = (ToolTip = "A") ) TSubclassOf<UUserWidget> Slot_Template;
 

@@ -66,6 +66,13 @@ bool UAModule_UI_Inventory_Slot::NativeOnDrop(const FGeometry &in_geometry, cons
 	return true;
 }
 //-----------------------------------------------------------------------------------------------------------
+void UAModule_UI_Inventory_Slot::Init(const ESlot_Type slot_type, UTexture2D *texture2d)
+{
+	Slot_Type = slot_type;
+	Image_Root->GetDynamicMaterial()->SetTextureParameterValue(FName("Base_Slot_Texture"), texture2d);
+}
+//-----------------------------------------------------------------------------------------------------------
+
 
 
 
@@ -79,17 +86,59 @@ void UModule_UI_Inventory::Create_Slot()
 	Uniform_Grid_Panel->AddChildToUniformGrid(slot, 7, 7);
 }
 //-----------------------------------------------------------------------------------------------------------
+void UModule_UI_Inventory::Temp()
+{
+	//size_t i;
+	//constexpr size_t count = 9;
+
+	//for (i = 0; i < count; i++)
+	//{// Equipment
+
+	//	module_ui_inventory_slot = Cast<UAModule_UI_Inventory_Slot>(CreateWidget(this, Slot_Template));
+	//	module_ui_inventory_slot->Slot_Type = ESlot_Type::EST_Helmet;
+	//	module_ui_inventory_slot->Image_Root->GetDynamicMaterial()->SetTextureParameterValue(FName("Base_Slot_Texture"), Equipment_Texture[i]);
+
+	//	//module_ui_inventory_slot->ApplyTextureToMaterial();
+
+	//	equipment.Add(module_ui_inventory_slot);
+	//	Uniform_Grid_Panel->AddChildToUniformGrid(module_ui_inventory_slot, i, 1);
+	//}
+}
+//-----------------------------------------------------------------------------------------------------------
 void UModule_UI_Inventory::Create_Slots_Equipment()
 {
 	size_t i;
 	constexpr size_t count = 9;
-	UWidget *slot;
-	
-	slot = CreateWidget(this, Slot_Template);
+	TArray<UAModule_UI_Inventory_Slot *> equipment;
+	TArray<UAModule_UI_Inventory_Slot *> accessory;
+	UAModule_UI_Inventory_Slot *module_ui_inventory_slot;
 
-	// Set to widget enum type, texture | in slot maybe create MI 
+	Temp();
 
 	for (i = 0; i < count; i++)
-		Uniform_Grid_Panel->AddChildToUniformGrid(CreateWidget(this, Slot_Template), i, 1);
+	{// Equipment
+
+		module_ui_inventory_slot = Cast<UAModule_UI_Inventory_Slot>(CreateWidget(this, Slot_Template) );
+		module_ui_inventory_slot->Init( (ESlot_Type)i, Equipment_Texture[i]);
+
+		equipment.Add(module_ui_inventory_slot);
+		
+		Uniform_Grid_Panel->AddChildToUniformGrid(equipment[i], i, 1);
+	}
+
+	for (i = 0; i < count; i++)
+	{// Accessory
+
+		module_ui_inventory_slot = Cast<UAModule_UI_Inventory_Slot>(CreateWidget(this, Slot_Template) );
+		module_ui_inventory_slot->Slot_Type = ESlot_Type::EST_Helmet;
+		module_ui_inventory_slot->Image_Root->GetDynamicMaterial()->SetTextureParameterValue(FName("Base_Slot_Texture"), Accesorie_Texture[i]);
+
+		//module_ui_inventory_slot->ApplyTextureToMaterial();
+
+		accessory.Add(module_ui_inventory_slot);
+		Uniform_Grid_Panel->AddChildToUniformGrid(module_ui_inventory_slot, i, 6);
+	}
+
+
 }
 //-----------------------------------------------------------------------------------------------------------

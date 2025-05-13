@@ -55,21 +55,33 @@ bool UAModule_UI_Inventory_Slot::NativeOnDrop(const FGeometry &in_geometry, cons
 	UAModule_UI_Inventory_Slot *drop_widget_ref;
 	const FSlateBrush from_drop_slot_brush = Image_Root->GetBrush();  // Save brush for dropped slot || To set in dropped slot
 
+	// 1.0. Init
 	drop_operations = Cast<UADrag_Drop_Operation>(in_operation);  // Get Info from other widget(slot)
 	drop_widget_ref = Cast<UAModule_UI_Inventory_Slot>(drop_operations->Widget_Reference);  // check if dragged slot not something else
 
-	Image_Root->SetBrush(drop_widget_ref->Image_Root->GetBrush() );  // Change brush to dropped Slot
-	drop_widget_ref->Image_Root->SetBrush(from_drop_slot_brush);  // Change brush from dropped slot
+
+	// 2.0. Check is need to change widgets textures and data
+	if (drop_widget_ref->Slot_Type == Slot_Type)
+	{
+		// 2.1. Current Slot || Switch widgets textures
+		Image_Root->SetBrush(drop_widget_ref->Image_Root->GetBrush() );  // Change brush to dropped Slot
+
+		// !!! If equipment empty slot set texture to empty
+
+		// 2.2. Dropped Slot
+		drop_widget_ref->Image_Root->SetBrush(from_drop_slot_brush);  // Change brush from dropped slot
+	}
 
 	SetFocus();  // Set Focus to dropped widget
 	Super::NativeOnDrop(in_geometry, in_drag_drop_event, in_operation);
 	return true;
 }
 //-----------------------------------------------------------------------------------------------------------
-void UAModule_UI_Inventory_Slot::Init(const ESlot_Type slot_type, UTexture2D *texture2d)
+void UAModule_UI_Inventory_Slot::Init(const ESlot_Type slot_type, UTexture2D *texture2d, const FVector base_color)
 {
 	Slot_Type = slot_type;
 	Image_Root->GetDynamicMaterial()->SetTextureParameterValue(FName("Base_Slot_Texture"), texture2d);
+	Image_Root->GetDynamicMaterial()->SetVectorParameterValue(FName("Base_Color"), base_color);
 }
 //-----------------------------------------------------------------------------------------------------------
 
@@ -79,66 +91,51 @@ void UAModule_UI_Inventory_Slot::Init(const ESlot_Type slot_type, UTexture2D *te
 
 
 // UModule_UI_Inventory
-void UModule_UI_Inventory::Create_Slot()
+TArray<UAModule_UI_Inventory_Slot *> UModule_UI_Inventory::Slot_Add(const int32 column, const int32 type_index, TArray<UTexture2D *> &textures)
 {
-	UWidget *slot = CreateWidget(this, Slot_Template);
+	ESlot_Type slot_type;
+	int32 i;
+	int32 texture_size;
+	UAModule_UI_Inventory_Slot *slot;
+	TArray<UAModule_UI_Inventory_Slot *> slot_array;
 
-	Uniform_Grid_Panel->AddChildToUniformGrid(slot, 7, 7);
+	texture_size = textures.Num();
+	slot_array.Reserve(texture_size);
+
+	for (i = 0; i < texture_size; ++i)
+	{
+		slot_type = static_cast<ESlot_Type>(i + type_index);
+		slot = Cast<UAModule_UI_Inventory_Slot>(CreateWidget(this, Slot_Template) );
+		slot->Init(slot_type, textures[i], FVector::ZeroVector);  // !!! Bad type if Accessory
+
+		if (Uniform_Grid_Panel->AddChildToUniformGrid(slot, i, column) )
+			slot_array.Emplace(slot);
+	}
+	return slot_array;
 }
 //-----------------------------------------------------------------------------------------------------------
-void UModule_UI_Inventory::Temp()
+void UModule_UI_Inventory::Create_Slots_At_Column(const ESlot_Type type, const int column, TArray<UAModule_UI_Inventory_Slot *> &array_slot)
 {
-	//size_t i;
-	//constexpr size_t count = 9;
+	int32 type_index;
+	TArray<UAModule_UI_Inventory_Slot *> test;
 
-	//for (i = 0; i < count; i++)
-	//{// Equipment
+	type_index = static_cast<int32>(type);
 
-	//	module_ui_inventory_slot = Cast<UAModule_UI_Inventory_Slot>(CreateWidget(this, Slot_Template));
-	//	module_ui_inventory_slot->Slot_Type = ESlot_Type::EST_Helmet;
-	//	module_ui_inventory_slot->Image_Root->GetDynamicMaterial()->SetTextureParameterValue(FName("Base_Slot_Texture"), Equipment_Texture[i]);
+	switch (type)
+	{
+	case ESlot_Type::EST_Equipment:
+		test = Slot_Add(column, type_index, Textures_Equipment);
+		break;
 
-	//	//module_ui_inventory_slot->ApplyTextureToMaterial();
+	case ESlot_Type::EST_Accessory:
+		test = Slot_Add(column, type_index, Textures_Accessory);
+		break;
 
-	//	equipment.Add(module_ui_inventory_slot);
-	//	Uniform_Grid_Panel->AddChildToUniformGrid(module_ui_inventory_slot, i, 1);
-	//}
-}
-//-----------------------------------------------------------------------------------------------------------
-void UModule_UI_Inventory::Create_Slots_Equipment()
-{
-	size_t i;
-	constexpr size_t count = 9;
-	TArray<UAModule_UI_Inventory_Slot *> equipment;
-	TArray<UAModule_UI_Inventory_Slot *> accessory;
-	UAModule_UI_Inventory_Slot *module_ui_inventory_slot;
-
-	Temp();
-
-	for (i = 0; i < count; i++)
-	{// Equipment
-
-		module_ui_inventory_slot = Cast<UAModule_UI_Inventory_Slot>(CreateWidget(this, Slot_Template) );
-		module_ui_inventory_slot->Init( (ESlot_Type)i, Equipment_Texture[i]);
-
-		equipment.Add(module_ui_inventory_slot);
-		
-		Uniform_Grid_Panel->AddChildToUniformGrid(equipment[i], i, 1);
+	default:
+		test = Slot_Add(column, type_index, Textures_Defaults);
+		break;
 	}
 
-	for (i = 0; i < count; i++)
-	{// Accessory
-
-		module_ui_inventory_slot = Cast<UAModule_UI_Inventory_Slot>(CreateWidget(this, Slot_Template) );
-		module_ui_inventory_slot->Slot_Type = ESlot_Type::EST_Helmet;
-		module_ui_inventory_slot->Image_Root->GetDynamicMaterial()->SetTextureParameterValue(FName("Base_Slot_Texture"), Accesorie_Texture[i]);
-
-		//module_ui_inventory_slot->ApplyTextureToMaterial();
-
-		accessory.Add(module_ui_inventory_slot);
-		Uniform_Grid_Panel->AddChildToUniformGrid(module_ui_inventory_slot, i, 6);
-	}
-
-
+	array_slot = test;
 }
 //-----------------------------------------------------------------------------------------------------------

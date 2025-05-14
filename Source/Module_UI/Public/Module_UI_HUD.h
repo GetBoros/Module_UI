@@ -23,5 +23,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI", meta = (AllowPrivateAccess = true) ) TSoftClassPtr<UUserWidget> Inventory;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (AllowPrivateAccess = true) ) UUserWidget *Menu_Main_Widget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (AllowPrivateAccess = true) ) UUserWidget *Inventory_Widget;  // Change to TObjPtr
+
 };
 //------------------------------------------------------------------------------------------------------------

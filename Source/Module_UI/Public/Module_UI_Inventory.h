@@ -75,7 +75,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Init") void Init(const ESlot_Type slot_type, UTexture2D *texture2d, const FVector base_color);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Type") ESlot_Type Slot_Type;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Type") UTexture2D *Textures_Defaults;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Components", meta = (BindWidget) ) TObjectPtr<UImage> Image_Root;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Class", meta = (ExposeOnSpawn = true) ) TSubclassOf<UAModule_UI_Dragged_Widget> Drag_Widget_Class;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Class", meta = (ExposeOnSpawn = true) ) TSubclassOf<UADrag_Drop_Operation> Drag_Drop_O_Class;
@@ -95,6 +96,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Type") TArray<UTexture2D *> Textures_Accessory;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Type", meta = (BindWidget) ) TObjectPtr<UUniformGridPanel> Uniform_Grid_Panel;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget | Type", meta = (ToolTip = "A") ) TSubclassOf<UUserWidget> Slot_Template;
-
 };
 //-----------------------------------------------------------------------------------------------------------

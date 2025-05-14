@@ -11,7 +11,30 @@ void UAModule_UI_Dragged_Widget::Update_State(const UImage *image, const FVector
 {
 	SizeBox_Root->SetWidthOverride(desired_size.X);
 	SizeBox_Root->SetHeightOverride(desired_size.Y);  // Set Widget Box Size
-	Border_Root->SetBrush(image->GetBrush() );
+	UObject *resource_object = image->GetBrush().GetResourceObject();
+	UMaterialInstance *material_instance = Cast<UMaterialInstance>(resource_object);
+
+	if (material_instance != 0)
+	{
+		UTexture *extracted_texture = 0;
+
+		// »щем параметр по имени
+		FMaterialParameterInfo param_info(TEXT("Base_Slot_Texture") );
+		material_instance->GetTextureParameterValue(param_info, extracted_texture);
+
+		if (extracted_texture != 0)
+		{
+			FSlateBrush new_brush {};
+			new_brush.SetResourceObject(extracted_texture);
+			new_brush.ImageSize = FVector2D(64.0f, 64.0f);  // или desired_size
+
+			Border_Root->SetBrush(new_brush);
+			return;
+		}
+	}
+
+	// ≈сли не материал или не нашли текстуру Ч fallback
+	Border_Root->SetBrush(image->GetBrush());
 }
 //-------------------------------------------------------------------------------------------------------------
 
@@ -45,6 +68,7 @@ void UAModule_UI_Inventory_Slot::NativeOnDragDetected(const FGeometry &in_geomet
 	Drag_Drop_Operation->Drag_Offset = Drag_Offset;  // Off set from mouse to correct add to viewport
 
 	out_operation = Drag_Drop_Operation;  // send operation to drop
+	Image_Root->GetDynamicMaterial()->SetVectorParameterValue(FName("Base_Color"), FVector::ZeroVector);
 
 	Super::NativeOnDragDetected(in_geometry, in_mouse_event, out_operation);
 }
@@ -64,12 +88,17 @@ bool UAModule_UI_Inventory_Slot::NativeOnDrop(const FGeometry &in_geometry, cons
 	if (drop_widget_ref->Slot_Type == Slot_Type)
 	{
 		// 2.1. Current Slot || Switch widgets textures
-		Image_Root->SetBrush(drop_widget_ref->Image_Root->GetBrush() );  // Change brush to dropped Slot
 
-		// !!! If equipment empty slot set texture to empty
+		Image_Root->SetBrush(drop_widget_ref->Image_Root->GetBrush() );  // Change brush to dropped Slot
+		Image_Root->GetDynamicMaterial()->SetVectorParameterValue(FName("Base_Color"), FVector::OneVector);
+
+		// !!! If equipment empty slot set texture to empty || if not swap set texture default
 
 		// 2.2. Dropped Slot
-		drop_widget_ref->Image_Root->SetBrush(from_drop_slot_brush);  // Change brush from dropped slot
+		drop_widget_ref->Image_Root->SetBrushFromTexture(Textures_Defaults, true);  // true = match size
+
+
+		//drop_widget_ref->Image_Root->SetBrush(from_drop_slot_brush);  // Change brush from dropped slot
 	}
 
 	SetFocus();  // Set Focus to dropped widget

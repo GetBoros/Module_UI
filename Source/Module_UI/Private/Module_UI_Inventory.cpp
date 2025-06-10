@@ -18,7 +18,6 @@ void UAModule_UI_Dragged_Widget::Update_State(const UImage *image, const FVector
 	{
 		UTexture *extracted_texture = 0;
 
-		// »щем параметр по имени
 		FMaterialParameterInfo param_info(TEXT("Base_Slot_Texture") );
 		material_instance->GetTextureParameterValue(param_info, extracted_texture);
 
@@ -33,7 +32,6 @@ void UAModule_UI_Dragged_Widget::Update_State(const UImage *image, const FVector
 		}
 	}
 
-	// ≈сли не материал или не нашли текстуру Ч fallback
 	Border_Root->SetBrush(image->GetBrush());
 }
 //-------------------------------------------------------------------------------------------------------------

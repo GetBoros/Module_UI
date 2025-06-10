@@ -4,7 +4,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Module_UI_Inventory.generated.h"
 
-//-----------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
 UENUM(BlueprintType) enum class ESlot_Type : uint8
 {
 	EST_Equipment,
@@ -30,13 +30,12 @@ UENUM(BlueprintType) enum class ESlot_Type : uint8
 	EST_Weapon_R,
 	EST_Last
 };
-//-------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
 class UImage;
 class UUniformGridPanel;
 class USizeBox;
 class UBorder;
-//-----------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
 UCLASS(meta = (DisableNativeTick) ) class UADrag_Drop_Operation : public UDragDropOperation
 {// This specialized Class enables us to pass through information as part of our drag and drop action.
 

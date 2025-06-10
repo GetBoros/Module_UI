@@ -10,8 +10,6 @@ AAModule_UI_HUD::AAModule_UI_HUD()
 //-----------------------------------------------------------------------------------------------------------
 void AAModule_UI_HUD::BeginPlay()
 {
-    Super::BeginPlay();
-
     if (Menu_Main != 0)  // Create Menu Main, maybe set to manual func
 		(Menu_Main_Widget = CreateWidget<UUserWidget>(GetWorld(), Menu_Main) )->AddToViewport(0);
 
@@ -19,6 +17,8 @@ void AAModule_UI_HUD::BeginPlay()
 		Inventory_Load_Stream();
 	else
 		UAssetManager::GetStreamableManager().RequestAsyncLoad(Inventory.ToSoftObjectPath(), FStreamableDelegate::CreateUObject(this, &AAModule_UI_HUD::Inventory_Load_Stream) );
+
+	Super::BeginPlay();  // Can add to view port Inventory or else
 }
 //-----------------------------------------------------------------------------------------------------------
 void AAModule_UI_HUD::Inventory_Load_Stream()

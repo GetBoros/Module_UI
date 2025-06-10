@@ -68,6 +68,7 @@ public:
 	virtual void NativeOnDragDetected(const FGeometry &in_geometry, const FPointerEvent &in_mouse_event, UDragDropOperation *&out_operation);
 	virtual bool NativeOnDrop(const FGeometry &in_geometry, const FDragDropEvent &in_drag_drop_event, UDragDropOperation *in_operation);  // What to do while on drop widget
 	
+	bool Is_Empty = true;
 	FVector2D Drag_Offset;
 	TObjectPtr<UADrag_Drop_Operation> Drag_Drop_Operation;
 	

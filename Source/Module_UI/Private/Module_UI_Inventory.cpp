@@ -84,20 +84,29 @@ bool UAModule_UI_Inventory_Slot::NativeOnDrop(const FGeometry &in_geometry, cons
 
 	// 2.0. Check is need to change widgets textures and data
 	if (drop_widget_ref->Slot_Type == Slot_Type)
-	{
-		// 2.1. Current Slot || Switch widgets textures
+	{// if slot type the same
 
-		Image_Root->SetBrush(drop_widget_ref->Image_Root->GetBrush() );  // Change brush to dropped Slot
-		Image_Root->GetDynamicMaterial()->SetVectorParameterValue(FName("Base_Color"), FVector::OneVector);
+		if (Is_Empty == true)  // If Dropped slot empty do next:
+		{
+			// 2.1. Current Slot || Switch widgets textures
+			Is_Empty = false;
+			Image_Root->SetBrush(drop_widget_ref->Image_Root->GetBrush() );  // Change brush to dropped Slot
+			Image_Root->GetDynamicMaterial()->SetVectorParameterValue(FName("Base_Color"), FVector::OneVector);
 
-		// !!! If equipment empty slot set texture to empty || if not swap set texture default
+			// 2.2. Dropped Slot
+			drop_widget_ref->Image_Root->SetBrushFromTexture(Textures_Defaults, true);  // true = match size
+			drop_widget_ref->Slot_Type = ESlot_Type::EST_Last;
+		}
+		else  // If Dropped slot not empty do next:
+		{
+			Image_Root->SetBrush(drop_widget_ref->Image_Root->GetBrush() );  // Change brush to dropped Slot
+			Image_Root->GetDynamicMaterial()->SetVectorParameterValue(FName("Base_Color"), FVector::OneVector);
 
-		// 2.2. Dropped Slot
-		drop_widget_ref->Image_Root->SetBrushFromTexture(Textures_Defaults, true);  // true = match size
-
-
-		//drop_widget_ref->Image_Root->SetBrush(from_drop_slot_brush);  // Change brush from dropped slot
+			drop_widget_ref->Image_Root->SetBrush(from_drop_slot_brush);  // Change brush from dropped slot
+		}
 	}
+
+	// !!! Need make good enum and if slot empty do shit
 
 	SetFocus();  // Set Focus to dropped widget
 	Super::NativeOnDrop(in_geometry, in_drag_drop_event, in_operation);

@@ -13,9 +13,9 @@ public:
 
 	virtual void BeginPlay();
 
+private:
 	void Inventory_Load_Stream();
 
-private:
 	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true) ) void Inventory_Handle(const int equipment, const int slots);
 	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true) ) void Inventory_Toggle();  // If inventory will be large better destroy?
 

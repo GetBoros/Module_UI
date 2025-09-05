@@ -2,8 +2,18 @@
 
 #include "Blueprint/DragDropOperation.h"
 #include "Blueprint/UserWidget.h"
+#include "GameplayTagContainer.h"
 #include "Module_UI_Inventory.generated.h"
 
+//------------------------------------------------------------------------------------------------------------
+//#include "MSkillTree.generated.h"
+//
+//USTRUCT(BlueprintType) struct MYINVENTORY_API FInventoryItem
+//{
+//    GENERATED_BODY()
+//
+//public:
+//};
 //------------------------------------------------------------------------------------------------------------
 UENUM(BlueprintType) enum class ESlot_Type : uint8
 {
@@ -68,7 +78,7 @@ public:
 	virtual void NativeOnDragDetected(const FGeometry &in_geometry, const FPointerEvent &in_mouse_event, UDragDropOperation *&out_operation);
 	virtual bool NativeOnDrop(const FGeometry &in_geometry, const FDragDropEvent &in_drag_drop_event, UDragDropOperation *in_operation);  // What to do while on drop widget
 	
-	bool Is_Empty = true;
+	bool Is_Empty;
 	FVector2D Drag_Offset;
 	TObjectPtr<UADrag_Drop_Operation> Drag_Drop_Operation;
 	

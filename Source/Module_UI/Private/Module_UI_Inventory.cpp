@@ -125,7 +125,7 @@ void UAModule_UI_Inventory_Slot::Init(const ESlot_Type slot_type, UTexture2D *te
 
 
 
-
+#include "GameplayTagsManager.h"
 // UModule_UI_Inventory
 TArray<UAModule_UI_Inventory_Slot *> UModule_UI_Inventory::Slot_Add(const int32 column, const int32 type_index, TArray<UTexture2D *> &textures)
 {
@@ -147,6 +147,7 @@ TArray<UAModule_UI_Inventory_Slot *> UModule_UI_Inventory::Slot_Add(const int32 
 		if (Uniform_Grid_Panel->AddChildToUniformGrid(slot, i, column) )
 			slot_array.Emplace(slot);
 	}
+
 	return slot_array;
 }
 //-----------------------------------------------------------------------------------------------------------
